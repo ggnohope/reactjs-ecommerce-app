@@ -1,0 +1,136 @@
+@import "tailwindcss";
+
+@theme {
+  --color-paper: #f4efe6;
+  --color-paper-deep: #eae3d3;
+  --color-ink: #191512;
+  --color-ink-soft: #4a423a;
+  --color-vermillion: #c03b12;
+  --color-moss: #5f6347;
+  --color-gold: #a87b2d;
+  --color-rule: rgba(25, 21, 18, 0.18);
+
+  --font-display: "Fraunces", "Georgia", serif;
+  --font-body: "Libre Franklin", "Helvetica Neue", sans-serif;
+  --font-mono: "Spline Sans Mono", "Courier New", monospace;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    /* Subtle paper grain via layered radial gradients */
+    background-image: radial-gradient(rgba(25, 21, 18, 0.035) 1px, transparent 1px);
+    background-size: 4px 4px;
+  }
+
+  ::selection {
+    background: var(--color-vermillion);
+    color: var(--color-paper);
+  }
+
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: var(--font-display);
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Editorial hairline rules */
+  .rule-t {
+    border-top: 1px solid var(--color-rule);
+  }
+  .rule-b {
+    border-bottom: 1px solid var(--color-rule);
+  }
+
+  /* Small-caps mono label — the catalogue voice */
+  .label-mono {
+    font-family: var(--font-mono);
+    font-size: 0.675rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .wonky-italic {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-variation-settings: "SOFT" 60, "WONK" 1;
+  }
+
+  /* Hard offset shadow — print-block feel */
+  .shadow-block {
+    box-shadow: 5px 5px 0 var(--color-ink);
+  }
+  .shadow-block-sm {
+    box-shadow: 3px 3px 0 var(--color-ink);
+  }
+
+  .link-underline {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 1px;
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    transition: background-size 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .link-underline:hover {
+    background-size: 100% 1px;
+  }
+}
+
+/* Marquee ticker */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: marquee 28s linear infinite;
+}
+
+/* Slow drift for decorative elements */
+@keyframes drift {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(1.5deg); }
+}
+
+.animate-drift {
+  animation: drift 7s ease-in-out infinite;
+}
+
+/* Spinning seal/stamp */
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 22s linear infinite;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
