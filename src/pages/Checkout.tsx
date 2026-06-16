@@ -227,9 +227,9 @@ export default function Checkout() {
             </header>
             <div className="p-5">
               <p className="text-sm text-ink-soft">
-                Orders are placed first, then settled by card via Stripe from the order page.
-                If payments are not configured on the server, your order simply remains
-                <span className="font-mono"> pending</span> — nothing is charged.
+                Đơn được tạo trước, rồi thanh toán qua PayOS (VietQR) từ trang đơn hàng.
+                Nếu thanh toán chưa được cấu hình trên máy chủ, đơn của bạn vẫn ở trạng thái
+                <span className="font-mono"> pending</span> — không có khoản nào bị trừ.
               </p>
             </div>
           </section>
