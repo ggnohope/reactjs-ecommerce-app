@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { useQueryClient } from "@tanstack/react-query";
+import { QRCodeSVG } from "qrcode.react";
 import Reveal from "../components/Reveal";
 import ProductImage from "../components/ProductImage";
 import { Button } from "../components/Field";
 import { useOrder } from "../lib/hooks";
 import { errorMessage, OrderAPI } from "../lib/api";
 import { useToast } from "../context/ToastContext";
-import { formatDate, money, pad } from "../lib/format";
+import { formatDate, money, moneyVND, pad } from "../lib/format";
+import type { PaymentLink } from "../lib/types";
 import { PaymentBadge, StatusBadge } from "./Orders";
 
 const STEPS = ["pending", "confirmed", "shipped", "delivered"] as const;
@@ -16,18 +17,16 @@ export default function OrderDetail() {
   const { id } = useParams();
   const { data: order, isLoading } = useOrder(id);
   const { toast } = useToast();
-  const queryClient = useQueryClient();
   const [paying, setPaying] = useState(false);
-  const [intentInfo, setIntentInfo] = useState<{ id: string; client_secret: string } | null>(null);
+  const [link, setLink] = useState<PaymentLink | null>(null);
 
   const requestPayment = async () => {
     if (!order) return;
     setPaying(true);
     try {
-      const intent = await OrderAPI.paymentIntent(order.id);
-      setIntentInfo(intent);
-      queryClient.invalidateQueries({ queryKey: ["orders", id] });
-      toast("Payment intent created");
+      const paymentLink = await OrderAPI.createPaymentLink(order.id);
+      setLink(paymentLink);
+      toast("Đã tạo liên kết thanh toán PayOS");
     } catch (err) {
       toast(errorMessage(err), "err");
     } finally {
@@ -140,25 +139,44 @@ export default function OrderDetail() {
             <p className="text-sm leading-relaxed">{order.shipping_address || "—"}</p>
           </section>
 
+          {order.payment_status === "paid" && (
+            <section className="border border-ink p-5">
+              <p className="text-sm font-semibold text-moss">✓ Đã thanh toán</p>
+            </section>
+          )}
+
           {order.payment_status === "pending" && !cancelled && (
             <section className="border border-ink p-5">
-              <p className="label-mono mb-3 text-ink-soft">Settle payment</p>
-              {intentInfo ? (
-                <div className="space-y-2">
-                  <p className="text-sm text-moss">✓ Payment intent created with Stripe.</p>
-                  <p className="break-all font-mono text-xs text-ink-soft">{intentInfo.id}</p>
+              <p className="label-mono mb-3 text-ink-soft">Thanh toán</p>
+              {link ? (
+                <div className="space-y-4">
+                  <div className="flex justify-center bg-white p-3">
+                    <QRCodeSVG value={link.qr_code} size={200} />
+                  </div>
+                  <p className="text-center text-sm">
+                    Quét mã VietQR · <span className="font-mono">{moneyVND(link.amount)}</span>
+                  </p>
+                  <a
+                    href={link.checkout_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block"
+                  >
+                    <Button className="w-full" type="button">
+                      Mở trang thanh toán PayOS →
+                    </Button>
+                  </a>
                   <p className="text-xs text-ink-soft">
-                    Complete the charge with Stripe's client SDK using the client secret, or
-                    confirm it from the Stripe dashboard (test mode).
+                    Sau khi thanh toán, trạng thái sẽ tự cập nhật.
                   </p>
                 </div>
               ) : (
                 <>
                   <Button className="w-full" onClick={requestPayment} disabled={paying}>
-                    {paying ? "Contacting Stripe…" : "Pay by card →"}
+                    {paying ? "Đang tạo liên kết…" : "Thanh toán qua PayOS →"}
                   </Button>
                   <p className="mt-2 text-xs text-ink-soft">
-                    Creates a Stripe payment intent for this order.
+                    Tạo mã VietQR và liên kết thanh toán PayOS cho đơn này.
                   </p>
                 </>
               )}
