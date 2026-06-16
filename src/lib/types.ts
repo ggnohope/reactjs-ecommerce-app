@@ -70,6 +70,14 @@ export interface Order {
   updated_at?: string;
 }
 
+export interface PaymentLink {
+  checkout_url: string;
+  qr_code: string; // VietQR string (EMVCo payload)
+  payment_link_id: string;
+  order_code: number;
+  amount: number; // VND
+}
+
 export interface Address {
   id: number;
   user_id: number;

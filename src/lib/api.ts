@@ -6,6 +6,7 @@ import type {
   Category,
   Order,
   PaginatedResponse,
+  PaymentLink,
   Product,
   ProductFilters,
   TokenPair,
@@ -148,9 +149,9 @@ export const OrderAPI = {
     api.get<APIResponse<Order>>(`/user/me/order/${id}`).then((r) => r.data.data),
   place: (shipping_address: string) =>
     api.post<APIResponse<Order>>("/user/me/order", { shipping_address }).then((r) => r.data.data),
-  paymentIntent: (order_id: number) =>
+  createPaymentLink: (order_id: number) =>
     api
-      .post<APIResponse<{ id: string; client_secret: string }>>("/orders/payment/intent", { order_id })
+      .post<APIResponse<PaymentLink>>("/orders/payment/link", { order_id })
       .then((r) => r.data.data),
 };
 
