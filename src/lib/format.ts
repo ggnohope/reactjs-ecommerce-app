@@ -7,6 +7,15 @@ export function money(n: number | undefined | null): string {
   return usd.format(n ?? 0);
 }
 
+const vnd = new Intl.NumberFormat("vi-VN", {
+  style: "currency",
+  currency: "VND",
+});
+
+export function moneyVND(n: number | undefined | null): string {
+  return vnd.format(n ?? 0);
+}
+
 export function formatDate(iso?: string): string {
   if (!iso) return "—";
   const d = new Date(iso);

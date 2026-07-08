@@ -72,6 +72,9 @@ export function useOrder(id: number | string | undefined) {
     queryKey: ["orders", id],
     queryFn: () => OrderAPI.get(id!),
     enabled: authenticated && id !== undefined,
+    // Auto-poll while payment is pending so the UI flips to paid once the
+    // PayOS webhook settles, then stops polling.
+    refetchInterval: (q) => (q.state.data?.payment_status === "pending" ? 4000 : false),
   });
 }
 

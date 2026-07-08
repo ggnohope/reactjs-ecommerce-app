@@ -13,6 +13,7 @@ import Verify from "./pages/Verify";
 import Checkout from "./pages/Checkout";
 import Orders from "./pages/Orders";
 import OrderDetail from "./pages/OrderDetail";
+import PaymentResult from "./pages/PaymentResult";
 import Account from "./pages/Account";
 import SellerDashboard from "./pages/seller/Dashboard";
 
@@ -71,6 +72,8 @@ export default function App() {
               </Protected>
             }
           />
+          <Route path="/payment/success" element={<PaymentResult status="success" />} />
+          <Route path="/payment/cancel" element={<PaymentResult status="cancel" />} />
           <Route
             path="/account"
             element={
